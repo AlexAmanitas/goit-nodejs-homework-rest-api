@@ -24,9 +24,9 @@ const removeContact = async contactId => {
   if (index === -1) {
     return null;
   }
-  const result = data.filter((_, i) => i !== index);
-  fs.writeFile(contactsPath, JSON.stringify(result));
-  return data[index];
+  const result = data.splice(index, 1);
+  fs.writeFile(contactsPath, JSON.stringify(data));
+  return result;
 };
 
 const addContact = async body => {
@@ -43,8 +43,8 @@ const updateContact = async (contactId, body) => {
     return null;
   }
   const result = { ...data[index], ...body };
-  data.splice(index, 1);
-  fs.writeFile(contactsPath, JSON.stringify([...data, result]));
+  data.splice(index, 1, result);
+  fs.writeFile(contactsPath, JSON.stringify(data));
   return result;
 };
 
