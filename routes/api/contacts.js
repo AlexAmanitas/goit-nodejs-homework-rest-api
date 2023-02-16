@@ -98,8 +98,7 @@ router.delete('/:contactId', async (req, res, next) => {
 router.put('/:contactId', async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const { name, email, phone } = req.body;
-    if (!name && !email && !phone) {
+    if (Object.keys(req.body).length === 0) {
       const error = new Error('missing fields');
       error.status = 400;
       throw error;
