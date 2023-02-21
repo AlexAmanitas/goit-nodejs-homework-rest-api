@@ -4,7 +4,11 @@ const router = express.Router();
 
 const { validateBody } = require('../../middlewares');
 
-const { contactPostShema, contactPutShema } = require('../../schemas/contacts');
+const {
+  contactPostShema,
+  contactPutShema,
+  contactPatchShema,
+} = require('../../schemas/contacts');
 
 const {
   getAll,
@@ -12,6 +16,7 @@ const {
   add,
   deleteById,
   updateById,
+  updateStatus,
 } = require('../../controllers/contacts');
 
 router.get('/', getAll);
@@ -23,5 +28,11 @@ router.post('/', validateBody(contactPostShema), add);
 router.delete('/:contactId', deleteById);
 
 router.put('/:contactId', validateBody(contactPutShema), updateById);
+
+router.patch(
+  '/:contactId/favorite',
+  validateBody(contactPatchShema),
+  updateStatus
+);
 
 module.exports = router;

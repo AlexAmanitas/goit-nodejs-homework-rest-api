@@ -1,12 +1,9 @@
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
+require('dotenv').config();
 
 const contactsRouter = require('./routes/api/contacts');
-const mongoose = require('mongoose');
-
-const DB_HOST =
-  'mongodb+srv://usver123:YkOOj4W9nxVx9w2ADvZA@cluster0.llpuulr.mongodb.net/contacts_db?retryWrites=true&w=majority';
 
 const app = express();
 

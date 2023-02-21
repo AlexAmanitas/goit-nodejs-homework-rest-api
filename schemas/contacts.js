@@ -4,6 +4,7 @@ const contactPostShema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
+  favorite: Joi.boolean().default(false),
 });
 const contactPutShema = Joi.object({
   name: Joi.string(),
@@ -11,4 +12,8 @@ const contactPutShema = Joi.object({
   phone: Joi.string(),
 });
 
-module.exports = { contactPostShema, contactPutShema };
+const contactPatchShema = Joi.object({
+  favorite: Joi.boolean().required(),
+});
+
+module.exports = { contactPostShema, contactPutShema, contactPatchShema };
