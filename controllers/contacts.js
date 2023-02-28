@@ -8,13 +8,10 @@ const {
   updateStatusContact,
 } = require('../models/contacts');
 
-const { v4 } = require('uuid');
-
 const getAll = async (req, res, next) => {
   const { favorite = null } = req.query;
   const { _id } = req.user;
   const { page = 1, limit = 10 } = req.query;
-  console.log(page, limit, favorite);
   const skip = (page - 1) * limit;
   const contacts = !favorite
     ? await listContacts({ owner: _id }, { skip, limit: +limit })
@@ -85,7 +82,6 @@ const updateStatus = async (req, res, next) => {
     throw HttpError(400, 'missing fields favorite');
   }
   const result = await updateStatusContact(contactId, req.body);
-  console.log(req.body, result);
   if (!result) {
     throw HttpError(404, 'Not found');
   }

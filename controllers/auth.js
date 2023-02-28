@@ -10,19 +10,15 @@ const { SECRET_KEY } = process.env;
 const register = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  console.log('USER', user);
   if (user) {
     throw HttpError(409, 'Email in use');
   }
   const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-
-  const result = await User.create({
+  await User.create({
     email,
     password: hashPassword,
     subscription: 'starter',
   });
-
-  console.log(result);
   res.status(201).json({
     user: {
       email,
@@ -35,16 +31,12 @@ const logIn = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   const passCompare = bcrypt.compareSync(password, user.password);
-  console.log('USER', user, 'PASSCOMPARE', passCompare);
   if (!user || !passCompare) {
     throw HttpError(401, 'Email or password is wrong');
   }
   const payload = { id: user._id };
-
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '2h' });
   await User.findByIdAndUpdate(user._id, { token });
-
-  console.log(payload, token);
   res.status(200).json({
     token,
     user: {
@@ -59,11 +51,9 @@ const logOut = async (req, res) => {
   await User.findByIdAndUpdate(_id, { token: null });
   res.status(204).json();
 };
-
 const getCurrentUser = async (req, res) => {
   const { _id } = req.user;
   const user = await User.findById(_id);
-
   res.status(200).json({
     email: user.email,
     subscription: user.subscription,
@@ -73,9 +63,7 @@ const getCurrentUser = async (req, res) => {
 const updateUserStatus = async (req, res) => {
   const { subscription } = req.body;
   const { _id } = req.user;
-  console.log(subscription);
   const user = await User.findByIdAndUpdate(_id, { subscription });
-  console.log(user);
   res.status(200).json({
     data: { user },
   });
