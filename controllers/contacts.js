@@ -11,7 +11,14 @@ const {
 const { v4 } = require('uuid');
 
 const getAll = async (req, res, next) => {
-  const contacts = await listContacts();
+  const { favorite = null } = req.query;
+  const { _id } = req.user;
+  const { page = 1, limit = 10 } = req.query;
+  console.log(page, limit, favorite);
+  const skip = (page - 1) * limit;
+  const contacts = !favorite
+    ? await listContacts({ owner: _id }, { skip, limit: +limit })
+    : await listContacts({ owner: _id, favorite }, { skip, limit: +limit });
   res.status(200).json({
     status: 'success',
     code: 200,
@@ -33,8 +40,8 @@ const getById = async (req, res, next) => {
 };
 
 const add = async (req, res, next) => {
-  console.log('object');
-  const result = await addContact(req.body);
+  const { _id } = req.user;
+  const result = await addContact({ ...req.body, owner: _id });
   res.status(201).json({
     status: 'success',
     code: 201,
@@ -78,6 +85,7 @@ const updateStatus = async (req, res, next) => {
     throw HttpError(400, 'missing fields favorite');
   }
   const result = await updateStatusContact(contactId, req.body);
+  console.log(req.body, result);
   if (!result) {
     throw HttpError(404, 'Not found');
   }
