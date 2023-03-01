@@ -3,14 +3,12 @@ const { HttpError, ctrlWrapper } = require('../helpers');
 const Contact = require('../models/contact');
 
 const getAll = async (req, res) => {
-  const { favorite = [true, false] } = req.query;
+  const { favorite = [true, false], page = 1, limit = 10 } = req.query;
   const { _id } = req.user;
-  const { page = 1, limit = 10 } = req.query;
-  const skip = (page - 1) * limit;
-  const contacts = await Contact.find({ owner: _id, favorite }, '', {
-    skip,
-    limit: +limit,
-  });
+  const queryParams = { owner: _id, favorite: favorite };
+  const paginationParams = { skip: (page - 1) * limit, limit: +limit };
+
+  const contacts = await Contact.find(queryParams, '', paginationParams);
 
   res.status(200).json({
     status: 'success',
