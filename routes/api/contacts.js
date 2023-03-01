@@ -31,6 +31,7 @@ router.put('/:contactId', auth, validateBody(contactPutShema), updateById);
 
 router.patch(
   '/:contactId/favorite',
+  auth,
   validateBody(contactPatchShema),
   updateStatus
 );

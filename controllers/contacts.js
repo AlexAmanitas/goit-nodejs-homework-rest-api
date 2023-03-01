@@ -1,21 +1,17 @@
 const { HttpError, ctrlWrapper } = require('../helpers');
-const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-  updateStatusContact,
-} = require('../models/contacts');
 
-const getAll = async (req, res, next) => {
-  const { favorite = null } = req.query;
+const Contact = require('../models/contact');
+
+const getAll = async (req, res) => {
+  const { favorite = [true, false] } = req.query;
   const { _id } = req.user;
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
-  const contacts = !favorite
-    ? await listContacts({ owner: _id }, { skip, limit: +limit })
-    : await listContacts({ owner: _id, favorite }, { skip, limit: +limit });
+  const contacts = await Contact.find({ owner: _id, favorite }, '', {
+    skip,
+    limit: +limit,
+  });
+
   res.status(200).json({
     status: 'success',
     code: 200,
@@ -23,9 +19,10 @@ const getAll = async (req, res, next) => {
   });
 };
 
-const getById = async (req, res, next) => {
+const getById = async (req, res) => {
+  const { _id } = req.user;
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const contact = await Contact.findOne({ _id: contactId, owner: _id });
   if (!contact) {
     throw HttpError(404, 'Not found');
   }
@@ -36,9 +33,9 @@ const getById = async (req, res, next) => {
   });
 };
 
-const add = async (req, res, next) => {
+const add = async (req, res) => {
   const { _id } = req.user;
-  const result = await addContact({ ...req.body, owner: _id });
+  const result = await Contact.create({ ...req.body, owner: _id });
   res.status(201).json({
     status: 'success',
     code: 201,
@@ -46,15 +43,18 @@ const add = async (req, res, next) => {
   });
 };
 
-const updateById = async (req, res, next) => {
+const updateById = async (req, res) => {
+  const { _id } = req.user;
   const { contactId } = req.params;
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, 'missing fields');
   }
-  const result = await updateContact(contactId, req.body);
+  const result = await Contact.findOne({ _id: contactId, owner: _id });
   if (!result) {
     throw HttpError(404, 'Not found');
   }
+  await Contact.updateOne({ _id: contactId, owner: _id }, { $set: req.body });
+
   res.status(200).json({
     status: 'success',
     code: 201,
@@ -62,9 +62,10 @@ const updateById = async (req, res, next) => {
   });
 };
 
-const deleteById = async (req, res, next) => {
+const deleteById = async (req, res) => {
+  const { _id } = req.user;
   const { contactId } = req.params;
-  const contact = await removeContact(contactId);
+  const contact = await Contact.deleteOne({ _id: contactId, owner: _id });
   if (!contact) {
     throw HttpError(404, 'Not found');
   }
@@ -76,15 +77,18 @@ const deleteById = async (req, res, next) => {
   });
 };
 
-const updateStatus = async (req, res, next) => {
+const updateStatus = async (req, res) => {
+  const { _id } = req.user;
   const { contactId } = req.params;
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, 'missing fields favorite');
   }
-  const result = await updateStatusContact(contactId, req.body);
+  const result = await Contact.findOne({ _id: contactId, owner: _id });
   if (!result) {
     throw HttpError(404, 'Not found');
   }
+  await Contact.updateOne({ _id: contactId, owner: _id }, { $set: req.body });
+
   res.status(200).json({
     status: 'success',
     code: 201,
