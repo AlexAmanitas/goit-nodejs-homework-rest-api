@@ -1,7 +1,7 @@
 const Contact = require('../models/contact');
 
-const listContacts = async () => {
-  const contacts = await Contact.find();
+const listContacts = async (obj, paginObj) => {
+  const contacts = await Contact.find(obj, '', paginObj);
   return contacts;
 };
 
