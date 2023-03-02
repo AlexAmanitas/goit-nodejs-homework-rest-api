@@ -16,7 +16,6 @@ const getAll = async (req, res) => {
   const paginationParams = { skip: (page - 1) * limit, limit: +limit };
 
   const contacts = await Contact.find(queryParams, '', paginationParams);
-  console.log(queryParams);
   res.status(200).json({
     status: 'success',
     code: 200,
