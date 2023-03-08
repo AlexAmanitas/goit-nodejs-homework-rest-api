@@ -101,7 +101,7 @@ const updateAvatar = async (req, res) => {
 
 module.exports = {
   register: ctrlWrapper(register),
-  logIn: ctrlWrapper(logIn),
+  logIn,
   logOut: ctrlWrapper(logOut),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   updateUserStatus: ctrlWrapper(updateUserStatus),
