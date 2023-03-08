@@ -2,9 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 
-const { auth, validateBody } = require('../../middlewares');
+const { auth, validateBody, upload } = require('../../middlewares');
 
 const { userSchema, userStatusSchema } = require('../../schemas/users');
+
+// const upload = require('../../multer');
 
 const {
   register,
@@ -12,6 +14,7 @@ const {
   logOut,
   getCurrentUser,
   updateUserStatus,
+  updateAvatar,
 } = require('../../controllers/auth');
 
 router.post('/signup', validateBody(userSchema), register);
@@ -23,5 +26,7 @@ router.get('/logout', auth, logOut);
 router.get('/current', auth, getCurrentUser);
 
 router.patch('/', auth, validateBody(userStatusSchema), updateUserStatus);
+
+router.patch('/avatar', auth, upload.single('avatar'), updateAvatar);
 
 module.exports = router;
