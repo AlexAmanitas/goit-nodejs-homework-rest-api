@@ -6,8 +6,6 @@ const { auth, validateBody, upload } = require('../../middlewares');
 
 const { userSchema, userStatusSchema } = require('../../schemas/users');
 
-// const upload = require('../../multer');
-
 const {
   register,
   logIn,
