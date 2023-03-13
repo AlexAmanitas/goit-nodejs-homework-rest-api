@@ -9,4 +9,8 @@ const userStatusSchema = Joi.object({
   subscription: Joi.string().valid('starter', 'pro', 'business'),
 });
 
-module.exports = { userSchema, userStatusSchema };
+const userVerifySchema = Joi.object({
+  email: Joi.string().required(),
+});
+
+module.exports = { userSchema, userStatusSchema, userVerifySchema };

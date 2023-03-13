@@ -4,7 +4,11 @@ const router = express.Router();
 
 const { auth, validateBody, upload } = require('../../middlewares');
 
-const { userSchema, userStatusSchema } = require('../../schemas/users');
+const {
+  userSchema,
+  userStatusSchema,
+  userVerifySchema,
+} = require('../../schemas/users');
 
 const {
   register,
@@ -13,6 +17,8 @@ const {
   getCurrentUser,
   updateUserStatus,
   updateAvatar,
+  userVerification,
+  resendEmail,
 } = require('../../controllers/auth');
 
 router.post('/signup', validateBody(userSchema), register);
@@ -26,5 +32,9 @@ router.get('/current', auth, getCurrentUser);
 router.patch('/', auth, validateBody(userStatusSchema), updateUserStatus);
 
 router.patch('/avatar', auth, upload.single('avatar'), updateAvatar);
+
+router.get('/verify/:verificationToken', userVerification);
+
+router.post('/verify', validateBody(userVerifySchema), resendEmail);
 
 module.exports = router;
