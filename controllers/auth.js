@@ -133,10 +133,7 @@ const userVerification = async (req, res) => {
 };
 
 const resendEmail = async (req, res) => {
-  const { email } = req.body;
-  console.log(req.body);
   const user = await User.findOne(req.body);
-  console.log(user, email);
   if (!user.verificationToken) {
     throw HttpError(409, 'Email has already been verified ');
   }
